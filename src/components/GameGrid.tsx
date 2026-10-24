@@ -1,34 +1,42 @@
-import { useState } from 'react'
-
 import { COLOR_MAP } from '../constants'
 
-import type { GameGridProps, GridCellProps, GridRowProps } from './types'
+import type { GameGridProps, GridCellProps } from '../types'
 
-const GridCell = ({ cell }: GridCellProps) => {
-  const [isClicked, setIsClicked] = useState(false)
-
+const GridCell = ({ cell, onClick }: GridCellProps) => {
   return (
     <button
+      type="button"
+      onClick={onClick}
+      style={{ backgroundColor: COLOR_MAP[cell.region] }}
       className="flex aspect-square items-center justify-center rounded-sm"
-      style={{ backgroundColor: COLOR_MAP[cell] }}
-      onClick={() => setIsClicked(!isClicked)}
     >
-      {isClicked ? 'X' : ''}
+      {cell.isClicked ? 'X' : ''}
     </button>
   )
 }
 
-const GridRow = ({ row, rowIndex }: GridRowProps) =>
-  row.map((cell, cellIndex) => (
-    <GridCell cell={cell} key={`${rowIndex}-${cellIndex}`} />
-  ))
+export const GameGrid = ({ grid, setGrid }: GameGridProps) => {
+  const cellClicked = (i: number, j: number) => {
+    setGrid((prev) =>
+      prev.map((row, r) =>
+        row.map((item, c) =>
+          r === i && c === j ? { ...item, isClicked: !item.isClicked } : item,
+        ),
+      ),
+    )
+  }
 
-export const GameGrid = ({ game }: GameGridProps) => {
   return (
-    <div className="grid w-full max-w-md grid-cols-8 gap-2 pt-8">
-      {game.regions.map((row, rowIndex) => (
-        <GridRow key={rowIndex} row={row} rowIndex={rowIndex} />
-      ))}
+    <div className="grid grid-cols-8 gap-2">
+      {grid.map((row, i) =>
+        row.map((cell, j) => (
+          <GridCell
+            cell={cell}
+            onClick={() => cellClicked(i, j)}
+            key={`${i}-${j}`}
+          />
+        )),
+      )}
     </div>
   )
 }
