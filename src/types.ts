@@ -38,7 +38,7 @@ export type GameGridProps = {
 }
 
 export type GameOptionsProps = {
-  onPrint: () => void
-  onReset: () => void
-  onValidate: () => void
+  resetGameState: () => void
+  printGameState: () => string
+  checkGameState: () => { isValid: boolean; message: string }
 }

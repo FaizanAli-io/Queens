@@ -6,7 +6,12 @@ import { GameSelector } from './GameSelector'
 import { Header } from './Header'
 
 import { getGame } from '../utils/games'
-import { initializeGameState, resetGameState } from '../utils/gameState'
+import {
+  checkGameState,
+  initializeGameState,
+  printGameState,
+  resetGameState,
+} from '../utils/gameState'
 
 export const PageWrapper = () => {
   const [selectedGame, setSelectedGame] = useState(0)
@@ -15,15 +20,20 @@ export const PageWrapper = () => {
     initializeGameState(getGame(selectedGame).regions),
   )
 
+  const changeGame = (index: number) => {
+    setSelectedGame(index)
+    setGrid(initializeGameState(getGame(index).regions))
+  }
+
   return (
     <main className="mx-auto flex w-full max-w-md flex-col items-stretch gap-8">
       <Header />
-      <GameSelector selectedGame={selectedGame} onChange={setSelectedGame} />
+      <GameSelector selectedGame={selectedGame} onChange={changeGame} />
       <GameGrid key={selectedGame} grid={grid} setGrid={setGrid} />
       <GameOptions
-        onPrint={() => resetGameState(grid)}
-        onReset={() => resetGameState(grid)}
-        onValidate={() => resetGameState(grid)}
+        resetGameState={() => setGrid((prev) => resetGameState(prev))}
+        printGameState={() => printGameState(grid)}
+        checkGameState={() => checkGameState(grid)}
       />
     </main>
   )
